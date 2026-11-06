@@ -62,8 +62,8 @@ export function drawQrCode({ ctx, W, cx }: Scene, qr: HTMLCanvasElement): void {
 
 // ---- title ------------------------------------------------------------------
 
-/** One laurel branch; `side` -1 = left (opens right), 1 = right (mirrored). */
-function drawLaurel(ctx: CanvasRenderingContext2D, x: number, y: number, side: -1 | 1, height: number): void {
+/** Currently unused (kept for an alternative title style). One laurel branch; `side` -1 = left (opens right), 1 = right (mirrored). */
+export function drawLaurel(ctx: CanvasRenderingContext2D, x: number, y: number, side: -1 | 1, height: number): void {
   const r = height / 2
   withContext(ctx, () => {
     ctx.translate(x, y)

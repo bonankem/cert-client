@@ -22,9 +22,12 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
-          manualChunks: {
-            react: ['react', 'react-dom', 'react-router-dom'],
-            antd: ['antd', '@ant-design/icons', '@ant-design/cssinjs'],
+          // Vite 8 (Rolldown) only accepts the function form.
+          manualChunks(id: string) {
+            if (!id.includes('node_modules')) return undefined
+            if (/node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/.test(id)) return 'react'
+            if (/node_modules[\\/](antd|@ant-design|@rc-component|rc-[^\\/]+)[\\/]/.test(id)) return 'antd'
+            return undefined
           },
         },
       },

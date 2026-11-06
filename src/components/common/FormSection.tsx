@@ -1,4 +1,3 @@
-import { Typography } from 'antd'
 import type { ReactNode } from 'react'
 
 interface FormSectionProps {

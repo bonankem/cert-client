@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Form, Result, Skeleton, Typography } from 'antd'
+import { Alert, Button, Card, Form, Result, Skeleton } from 'antd'
 import { errorMessage } from '@/api'
 import BrandLogo from '@/components/common/BrandLogo'
 import { useFormConfig, useSubmitResponse } from '@/hooks/queries/public'

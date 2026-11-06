@@ -1,5 +1,5 @@
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Button, Flex, Typography } from 'antd'
+import { Button, Flex } from 'antd'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 

@@ -1,5 +1,5 @@
 import { CheckCircleFilled, EyeOutlined, SafetyCertificateOutlined, ThunderboltOutlined } from '@ant-design/icons'
-import { Badge, Button, Card, Flex, Segmented, Space, Tag, Typography } from 'antd'
+import { Button, Card, Flex, Segmented, Tag, Typography } from 'antd'
 import { useState } from 'react'
 import CertificateViewer from '@/components/certificate/CertificateViewer'
 import { CERTIFICATE_DESIGNS } from '@/config/constants'

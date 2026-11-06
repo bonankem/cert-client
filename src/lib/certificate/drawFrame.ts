@@ -4,7 +4,7 @@
  * bottom-right/bottom-left by a 180° rotation.
  */
 import { polygonPath, rotated180, strokeLine, withContext } from './canvas'
-import { CERT_COLORS as C, LAYOUT } from './constants'
+import { CERT_COLORS as C } from './constants'
 import type { Scene } from './types'
 
 const linear = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, stops: readonly string[]) => {
