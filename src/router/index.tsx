@@ -20,6 +20,7 @@ const adminRoutes: RouteObject[] = [
   { path: ADMIN_PATHS.verify, lazy: page(() => import('@/pages/admin/VerifyPage')) },
   { path: ADMIN_PATHS.settings, lazy: page(() => import('@/pages/admin/SettingsPage')) },
   { path: ADMIN_PATHS.account, lazy: page(() => import('@/pages/admin/AccountPage')) },
+  { path: ADMIN_PATHS.help, lazy: page(() => import('@/pages/admin/HelpPage')) },
   { path: '*', lazy: page(() => import('@/pages/admin/AdminNotFoundPage')) },
 ]
 

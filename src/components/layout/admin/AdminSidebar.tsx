@@ -3,6 +3,7 @@ import {
   FileDoneOutlined,
   LeftOutlined,
   LogoutOutlined,
+  QuestionCircleOutlined,
   RightOutlined,
   SafetyCertificateOutlined,
   SettingOutlined,
@@ -28,6 +29,7 @@ export const ADMIN_SIDEBAR_NAV: NavItem[] = [
   { path: ROUTES.admin.certificates, label: 'Certificates', description: 'Generation & list', icon: FileDoneOutlined },
   { path: ROUTES.admin.verify, label: 'Verify', description: 'Check certificates', icon: SafetyCertificateOutlined },
   { path: ROUTES.admin.settings, label: 'Settings', description: 'Trainer & signature', icon: SettingOutlined },
+  { path: ROUTES.admin.help, label: 'Help', description: 'How to use this app', icon: QuestionCircleOutlined },
 ]
 
 interface AdminSidebarProps {

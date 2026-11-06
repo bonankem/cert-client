@@ -12,6 +12,7 @@ export const ROUTES = {
     verify: '/admin/verify',
     settings: '/admin/settings',
     account: '/admin/account',
+    help: '/admin/help',
   },
 } as const
 
@@ -24,6 +25,7 @@ export const ADMIN_PATHS = {
   verify: 'verify',
   settings: 'settings',
   account: 'account',
+  help: 'help',
 } as const
 
 /** Absolute link encoded in each certificate's QR code. */
