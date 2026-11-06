@@ -2,6 +2,8 @@
 export const ROUTES = {
   feedback: '/',
   verify: (code = '') => (code ? `/verify/${encodeURIComponent(code)}` : '/verify'),
+  /** The participant's private status page. */
+  certificateStatus: (token: string) => `/certificate/${encodeURIComponent(token)}`,
   admin: {
     root: '/admin',
     login: '/admin/login',
@@ -12,6 +14,7 @@ export const ROUTES = {
     verify: '/admin/verify',
     settings: '/admin/settings',
     account: '/admin/account',
+    participants: '/admin/participants',
     help: '/admin/help',
   },
 } as const
@@ -25,6 +28,7 @@ export const ADMIN_PATHS = {
   verify: 'verify',
   settings: 'settings',
   account: 'account',
+  participants: 'participants',
   help: 'help',
 } as const
 

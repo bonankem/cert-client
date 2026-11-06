@@ -2,14 +2,14 @@ import { Alert, Button, Card, Form, Result, Skeleton } from 'antd'
 import { errorMessage } from '@/api'
 import BrandLogo from '@/components/common/BrandLogo'
 import { useFormConfig, useSubmitResponse } from '@/hooks/queries/public'
-import type { FeedbackFormValues, SubmittedResponse } from '@/types'
+import type { FeedbackFormValues, SubmitResult } from '@/types'
 import { cleanName } from '@/utils/text'
 import AboutYouSection from './AboutYouSection'
 import ConsentSection from './ConsentSection'
 import QuestionSection from './QuestionSection'
 
 interface FeedbackFormProps {
-  onSubmitted: (record: SubmittedResponse) => void
+  onSubmitted: (result: SubmitResult) => void
 }
 
 function FormFooter({ submitting }: { submitting: boolean }) {
@@ -22,10 +22,10 @@ function FormFooter({ submitting }: { submitting: boolean }) {
         loading={submitting}
         className="h-10 sm:h-11 text-xs sm:text-sm font-semibold rounded-lg"
       >
-        {submitting ? 'Submitting…' : 'Submit and get my certificate'}
+        {submitting ? 'Submitting…' : 'Submit feedback'}
       </Button>
       <p className="mt-2.5 sm:mt-3 mb-0 text-center text-xs text-slate-500 dark:text-slate-400">
-        Your responses go to the Zoracom training team.
+        Your responses go to the Zoracom training team, who approve each certificate.
       </p>
       <BrandLogo name="stablenet" className="mx-auto mt-3 sm:mt-4 h-7 sm:h-9" />
     </div>
@@ -61,7 +61,10 @@ export default function FeedbackForm({ onSubmitted }: FeedbackFormProps) {
   const { sections, questions, opcos, defaultOpco, consent } = config.data
 
   const handleFinish = (values: FeedbackFormValues) =>
-    submit.mutate({ ...values, fullName: cleanName(values.fullName) }, { onSuccess: onSubmitted })
+    submit.mutate(
+      { ...values, fullName: cleanName(values.fullName), email: values.email.trim().toLowerCase() },
+      { onSuccess: onSubmitted },
+    )
 
   return (
     <Card classNames={{ body: 'px-3! sm:px-5! pt-1! pb-4! sm:pb-5!' }}>

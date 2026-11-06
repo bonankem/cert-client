@@ -10,4 +10,8 @@ export const queryKeys = {
   responses: ['admin', 'responses'] as const,
   responseList: (query: ListResponsesQuery) => ['admin', 'responses', 'list', query] as const,
   response: (certId: string) => ['admin', 'responses', 'detail', certId] as const,
+  pendingCount: ['admin', 'responses', 'pending-count'] as const,
+  roster: ['admin', 'roster'] as const,
+  notificationEmails: ['admin', 'notification-emails'] as const,
+  submissionStatus: (token: string) => ['submission-status', token] as const,
 }

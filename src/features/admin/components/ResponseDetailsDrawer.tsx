@@ -1,5 +1,4 @@
 import { Alert, Descriptions, Drawer, Skeleton, Tabs, Typography } from 'antd'
-import CertificateViewer from '@/components/certificate/CertificateViewer'
 import { errorMessage } from '@/api'
 import { useResponse } from '@/hooks/queries/admin'
 import { useCertificateSettings, useFormConfig } from '@/hooks/queries/public'
@@ -7,6 +6,8 @@ import type { ResponseSummary } from '@/types'
 import AnswersCard from './AnswersCard'
 import DownloadHistoryCard from './DownloadHistoryCard'
 import ParticipantCard from './ParticipantCard'
+import { CertificatePanel } from './ReviewBar'
+import UpdateRequestCard from './UpdateRequestCard'
 
 interface ResponseDetailsDrawerProps {
   certId: string | null
@@ -54,8 +55,9 @@ export default function ResponseDetailsDrawer({ certId, open, onClose, summary }
               label: 'Participant & certificate',
               children: (
                 <div className="flex flex-col gap-4">
+                  <UpdateRequestCard response={detail} config={config.data} />
                   <ParticipantCard response={detail} />
-                  <CertificateViewer record={detail} settings={settings} trackAs="admin" />
+                  <CertificatePanel response={detail} settings={settings} />
                   <DownloadHistoryCard downloads={detail.downloads} />
                 </div>
               ),

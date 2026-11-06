@@ -8,12 +8,14 @@ import {
   SafetyCertificateOutlined,
   SettingOutlined,
   TableOutlined,
+  TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Tooltip } from 'antd'
+import { Badge, Tooltip } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import BrandLogo from '@/components/common/BrandLogo'
 import { ROUTES } from '@/config/routes'
+import { usePendingCount } from '@/hooks/queries/admin'
 import { useLogout, useMe } from '@/hooks/queries/auth'
 
 export interface NavItem {
@@ -21,16 +23,46 @@ export interface NavItem {
   label: string
   description?: string
   icon: typeof DashboardOutlined
+  /** Show the number of submissions awaiting approval. */
+  pendingBadge?: boolean
 }
 
 export const ADMIN_SIDEBAR_NAV: NavItem[] = [
   { path: ROUTES.admin.dashboard, label: 'Dashboard', description: 'Overview & metrics', icon: DashboardOutlined },
-  { path: ROUTES.admin.responses, label: 'Responses', description: 'Participant feedback', icon: TableOutlined },
+  {
+    path: ROUTES.admin.responses,
+    label: 'Responses',
+    description: 'Feedback & approvals',
+    icon: TableOutlined,
+    pendingBadge: true,
+  },
+  {
+    path: ROUTES.admin.participants,
+    label: 'Participants',
+    description: 'Auto-approval list',
+    icon: TeamOutlined,
+  },
   { path: ROUTES.admin.certificates, label: 'Certificates', description: 'Generation & list', icon: FileDoneOutlined },
   { path: ROUTES.admin.verify, label: 'Verify', description: 'Check certificates', icon: SafetyCertificateOutlined },
-  { path: ROUTES.admin.settings, label: 'Settings', description: 'Trainer & signature', icon: SettingOutlined },
+  { path: ROUTES.admin.settings, label: 'Settings', description: 'Certificate & notifications', icon: SettingOutlined },
   { path: ROUTES.admin.help, label: 'Help', description: 'How to use this app', icon: QuestionCircleOutlined },
 ]
+
+/** Orange count pill for nav items with `pendingBadge`; renders nothing when zero. */
+export function PendingBadge({ dot = false }: { dot?: boolean }) {
+  const counts = usePendingCount().data
+  const pending = (counts?.pending ?? 0) + (counts?.updates ?? 0)
+  if (!pending) return null
+  if (dot) return <Badge status="warning" className="absolute! top-1 right-2" />
+  return (
+    <span
+      title={`${pending} awaiting approval`}
+      className="ml-auto shrink-0 rounded-full bg-[#f26a21] px-1.5 py-px text-[10px] font-bold leading-4 text-white"
+    >
+      {pending > 99 ? '99+' : pending}
+    </span>
+  )
+}
 
 interface AdminSidebarProps {
   collapsed: boolean
@@ -133,8 +165,9 @@ export default function AdminSidebar({
                 isActive
                   ? 'bg-gradient-to-r from-blue-600/12 via-blue-500/8 to-sky-400/5 text-[#0072ce] font-semibold border-l-[3px] border-[#0072ce] shadow-2xs dark:from-sky-500/20 dark:to-sky-500/5 dark:text-sky-400 dark:border-sky-400'
                   : 'text-slate-600 hover:bg-white/80 hover:text-slate-900 border-l-[3px] border-transparent dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100'
-              } ${collapsed ? 'justify-center px-0' : ''}`}
+              } ${collapsed ? 'relative justify-center px-0' : ''}`}
             >
+              {collapsed && item.pendingBadge && <PendingBadge dot />}
               <Icon
                 className={`text-sm sm:text-base shrink-0 transition-transform group-hover:scale-110 ${
                   isActive
@@ -156,6 +189,7 @@ export default function AdminSidebar({
                   )}
                 </div>
               )}
+              {!collapsed && item.pendingBadge && <PendingBadge />}
             </Link>
           )
 

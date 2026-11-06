@@ -14,6 +14,7 @@ export const ENDPOINTS = {
     settings: '/api/certificate-settings',
     downloads: (certId: string) => `/api/certificates/${enc(certId)}/downloads`,
     verify: (code: string) => `/api/certificates/verify/${enc(code)}`,
+    status: (token: string) => `/api/certificates/status/${enc(token)}`,
   },
   admin: {
     dashboard: '/api/admin/dashboard',
@@ -22,6 +23,15 @@ export const ENDPOINTS = {
     responseDownloads: (certId: string) => `/api/admin/responses/${enc(certId)}/downloads`,
     exportCsv: '/api/admin/responses/export.csv',
     verify: '/api/admin/responses/verify',
+    pendingCount: '/api/admin/responses/pending-count',
+    approve: '/api/admin/responses/approve',
+    reject: (certId: string) => `/api/admin/responses/${enc(certId)}/reject`,
+    approveUpdate: (certId: string) => `/api/admin/responses/${enc(certId)}/update/approve`,
+    rejectUpdate: (certId: string) => `/api/admin/responses/${enc(certId)}/update/reject`,
+    notificationEmails: '/api/admin/notification-emails',
+    notificationTest: '/api/admin/notification-emails/test',
+    roster: '/api/admin/roster',
+    rosterEntry: (id: string) => `/api/admin/roster/${enc(id)}`,
     settings: '/api/admin/certificate-settings',
   },
 } as const

@@ -15,6 +15,16 @@ export function useCertificateSettings() {
 
 export const useSubmitResponse = () => useMutation({ mutationFn: publicApi.submitResponse })
 
+/** The participant's own submission, by its private token. Re-checks every 30 s while pending. */
+export const useSubmissionStatus = (token: string | undefined) =>
+  useQuery({
+    queryKey: queryKeys.submissionStatus(token ?? ''),
+    queryFn: () => publicApi.submissionStatus(token!),
+    enabled: !!token,
+    refetchInterval: (query) => (query.state.data?.status === 'pending' ? 30_000 : false),
+    retry: (count, error) => count < 2 && !(error instanceof Error && 'status' in error && error.status === 404),
+  })
+
 export const useVerifyPublic = (code: string | undefined) =>
   useQuery({
     queryKey: ['verify', code] as const,

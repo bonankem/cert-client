@@ -174,7 +174,7 @@ export default function CertificateArt({ className = '' }: { className?: string 
         <circle cx="13" cy="12" r="7" fill="#3aaa35" />
         <path d="M9.6 12.2 l2.4 2.4 l4.4 -5" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         <text x="26" y="15.5" fontSize="9" fontWeight="700" fill="#fff" fontFamily={FONT}>
-          Verified · instant PDF
+          Approved · verified PDF
         </text>
       </g>
     </svg>

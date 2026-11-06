@@ -129,6 +129,10 @@ const SECTIONS: Section[] = [
             <>
               Click <B>Save Active Template &amp; Details</B>.
             </>,
+            <>
+              Optional: add the expected attendees under <B>Participants</B> so their certificates are approved
+              automatically.
+            </>,
           ]}
         />
         <Note>
@@ -150,21 +154,130 @@ const SECTIONS: Section[] = [
         <Steps
           items={[
             <>
-              <B>About you:</B> full name exactly as it should be printed, and their MTN OpCo.
+              <B>About you:</B> full name exactly as it should be printed, email address, and MTN OpCo.
             </>,
             'One answer for each training question.',
             <>
               <B>Success story:</B> whether their feedback may be used as a success story.
             </>,
             <>
-              <B>Submit</B>: the certificate opens straight away, ready to download as a PDF.
+              <B>Submit feedback</B>: they see “awaiting approval” with a private status link, and get an email with
+              the same link.
             </>,
-            'Returning later on the same device and browser shows a banner to download it again.',
+            'Once you approve, they get a second email and can download the certificate as a PDF from that link.',
           ]}
         />
         <Note>
-          On another device the banner does not appear. Download the certificate for them from <B>Certificates</B>.
+          Participants on the <B>Participants</B> list skip the wait: their certificate opens as soon as they submit.
         </Note>
+      </>
+    ),
+  },
+  {
+    id: 'approving',
+    title: 'Approving certificates',
+    icon: <CheckCircleOutlined />,
+    to: `${ROUTES.admin.responses}?approval=pending`,
+    body: (
+      <>
+        <p className="m-0">
+          Nobody gets a certificate just by having the link. Each submission waits until you approve it, and only
+          approved certificates download or verify.
+        </p>
+        <Steps
+          items={[
+            <>
+              Open <B>Responses</B> and click the <B>Pending</B> tab. The orange number in the menu shows how many are
+              waiting.
+            </>,
+            <>
+              <B>Approve one:</B> use <B>⋮</B> → <B>Approve certificate</B>, or the <B>Approve</B> button on the
+              response.
+            </>,
+            <>
+              <B>Approve several:</B> tick the checkboxes, then <B>Approve selected</B>.
+            </>,
+            <>
+              <B>Reject:</B> <B>⋮</B> → <B>Reject…</B>, with an optional reason. The participant is
+              emailed the reason and can submit again.
+            </>,
+            <>
+              <B>Revoke</B> an approved certificate the same way. It stops verifying straight away.
+            </>,
+          ]}
+        />
+        <Note>
+          Every approval and rejection emails the participant automatically from no-reply@miro.zoracom.com. To get an
+          email yourself when something is waiting, add your address under <B>Settings</B> → <B>Admin notification
+          emails</B> (several addresses allowed) and use <B>Send test email</B> to check it arrives.
+        </Note>
+      </>
+    ),
+  },
+  {
+    id: 'updates',
+    title: 'One certificate per person, and update requests',
+    icon: <TeamOutlined />,
+    to: `${ROUTES.admin.responses}?updates=pending`,
+    body: (
+      <>
+        <p className="m-0">
+          Each email address gets one response and one certificate. Submitting again with the same email never creates a
+          second certificate.
+        </p>
+        <Table
+          head={['If the earlier submission is…', 'What happens']}
+          rows={[
+            ['Pending or rejected', 'It is replaced by the new one, which waits for approval again'],
+            [
+              'Approved',
+              <>
+                The changes become an <B>update request</B>. The current certificate stays valid until you decide.
+              </>,
+            ],
+          ]}
+        />
+        <Steps
+          items={[
+            <>
+              Open <B>Responses</B> → <B>Update requests</B>, or follow the Dashboard notice. Rows show an orange{' '}
+              <B>Update requested</B> tag.
+            </>,
+            'Open the response: the Update request card lists each changed field, current → requested.',
+            <>
+              <B>Approve update</B> applies the changes to the same certificate (same ID and code).{' '}
+              <B>Reject update</B> keeps it as it is, with an optional reason.
+            </>,
+          ]}
+        />
+        <Note>
+          The participant is emailed when the request arrives and when you decide. For privacy, a repeat submission
+          never shows the private link on screen; it is only emailed to that address.
+        </Note>
+      </>
+    ),
+  },
+  {
+    id: 'participant-list',
+    title: 'Participant list (auto-approval)',
+    icon: <TeamOutlined />,
+    to: ROUTES.admin.participants,
+    body: (
+      <>
+        <p className="m-0">
+          People on this list are approved the moment they submit. Everyone else waits for you.
+        </p>
+        <Bullets
+          items={[
+            <>
+              Paste one person per line: <Mono>Full name, email</Mono>, just an email, or just a name. Two columns
+              copied from Excel, or a CSV upload, also work.
+            </>,
+            'Email is the most reliable match. Names match regardless of word order, capitals or accents.',
+            'Adding people also approves any of their submissions already waiting.',
+            'Removing someone, or clearing the list, never un-approves a certificate.',
+          ]}
+        />
       </>
     ),
   },
@@ -181,7 +294,8 @@ const SECTIONS: Section[] = [
           rows={[
             ['Responses', 'Total submissions and how many OpCos they came from'],
             ['Rated training highly', 'Share choosing one of the two best answers to the overall rating question'],
-            ['Certificates downloaded', 'Share who downloaded their own certificate (admin downloads not counted)'],
+            ['Awaiting approval notice', 'Shown when submissions are waiting; Review now opens them'],
+            ['Certificates downloaded', 'Share of approved participants who downloaded (admin downloads not counted)'],
             ['Consented to story', 'Share who agreed their feedback may be used as a success story'],
             ['Responses per day', 'Submissions per day, in UTC (GMT)'],
             ['Responses by OpCo', 'How responses split across MTN operating companies'],
@@ -205,7 +319,10 @@ const SECTIONS: Section[] = [
         <Bullets
           items={[
             <>
-              <B>Search</B> by name, OpCo or certificate ID.
+              Tabs at the top: <B>All</B>, <B>Pending</B>, <B>Approved</B>, <B>Rejected</B>.
+            </>,
+            <>
+              <B>Search</B> by name, email, OpCo or certificate ID.
             </>,
             <>
               <B>Filter</B> with the funnel icons in the <B>OpCo</B> and <B>Consent</B> column headers.
@@ -217,7 +334,7 @@ const SECTIONS: Section[] = [
               <B>Full page:</B> click the participant’s name for the full response and download history.
             </>,
             <>
-              <B>Download</B> a certificate from the row’s <B>⋮</B> menu, in either design.
+              <B>Download</B> an approved certificate from the row’s <B>⋮</B> menu, in either design.
             </>,
             <>
               <B>Export CSV</B> downloads only what is currently shown, so filter first to export one OpCo.
@@ -239,6 +356,9 @@ const SECTIONS: Section[] = [
     body: (
       <Bullets
         items={[
+          <>
+            Lists approved certificates only. Pending ones are under <B>Responses</B>.
+          </>,
           <>
             Switch between <B>All</B>, <B>Downloaded</B> and <B>Not downloaded</B> to see who still needs a reminder.
           </>,
@@ -322,8 +442,10 @@ const SECTIONS: Section[] = [
         rows={[
           ['First load is slow after a quiet period', 'Wait up to a minute while the server wakes up'],
           ['“Too many requests” when signing in', '10 wrong attempts in 15 minutes pauses sign-in; wait 15 minutes'],
-          ['A participant misspelled their name', 'Delete their response and ask them to submit again'],
-          ['A participant lost their certificate', 'Download it from Certificates and send it on'],
+          ['A participant is waiting for their certificate', 'Approve it under Responses → Pending; they are emailed'],
+          ['A participant misspelled their name', 'Reject it with the reason; they can submit again with the same email'],
+          ['A participant lost their certificate', 'They can reopen the link in their email, or download it from Certificates'],
+          ['A participant didn’t get the email', 'Ask them to check spam, or download it for them from Certificates'],
           ['Old trainer name or dates on certificates', 'Update Settings and save'],
           ['Need a report or backup', 'Export CSV on the Dashboard or Responses page'],
           [
@@ -345,7 +467,7 @@ export default function HelpPage() {
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
       <AdminPageHeader
         title="Help"
-        description="How to set up certificates, follow responses and verify certificates."
+        description="How to set up certificates, approve them, follow responses and verify certificates."
       />
 
       <Card size="small">

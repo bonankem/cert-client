@@ -13,7 +13,8 @@ type StatusFilter = DownloadStatus | 'all'
 
 export default function CertificatesPage() {
   const { query, update, onTableChange } = useResponseQueryParams()
-  const list = useResponseList(query)
+  // Only approved responses have an issued certificate.
+  const list = useResponseList(useMemo(() => ({ ...query, approval: 'approved' as const }), [query]))
   const config = useFormConfig()
   const { settings } = useCertificateSettings()
   const totals = useDashboard().data?.totals
@@ -43,11 +44,11 @@ export default function CertificatesPage() {
 
   const count = (n: number | undefined) => (n === undefined ? '' : ` (${n})`)
   const statusOptions: { value: StatusFilter; label: string }[] = [
-    { value: 'all', label: `All${count(totals?.responses)}` },
+    { value: 'all', label: `All${count(totals?.approved)}` },
     { value: 'downloaded', label: `Downloaded${count(totals?.certificatesDownloaded)}` },
     {
       value: 'pending',
-      label: `Not downloaded${count(totals && totals.responses - totals.certificatesDownloaded)}`,
+      label: `Not downloaded${count(totals && totals.approved - totals.certificatesDownloaded)}`,
     },
   ]
 
@@ -55,7 +56,7 @@ export default function CertificatesPage() {
     <>
       <AdminPageHeader
         title="Certificates"
-        description="Every certificate issued, and whether the participant has downloaded it."
+        description="Every approved certificate, and whether the participant has downloaded it. Pending ones are under Responses."
         extra={
           <Flex align="center" gap={10}>
             <Tag color={settings.designVariant === 'modern' ? 'blue' : 'cyan'} className="py-1 px-2.5 text-xs">

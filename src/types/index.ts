@@ -67,6 +67,7 @@ export interface ChangePasswordRequest {
 
 export interface FeedbackFormValues {
   fullName: string
+  email: string
   opco: string
   consent: ConsentValue
   answers: AnswerMap
@@ -81,19 +82,66 @@ export interface CertificateRecord {
   verificationCode: string
 }
 
-/** Returned by POST /api/responses. */
-export interface SubmittedResponse extends CertificateRecord {
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected'
+
+/**
+ * The participant's view of their submission (POST /api/responses and the
+ * private status link). The certificate only appears once approved.
+ */
+export interface SubmissionStatus {
+  accessToken: string
+  status: ApprovalStatus
+  name: string
+  opco: string
+  submittedAt: string
+  reviewedAt: string | null
+  rejectionReason: string | null
+  certificate: CertificateRecord | null
+  /** The participant's most recent update request, if any. */
+  update: {
+    status: ApprovalStatus
+    requestedAt: string
+    reviewedAt: string | null
+    rejectionReason: string | null
+  } | null
+}
+
+/**
+ * Result of POST /api/responses. One email = one certificate: a repeat
+ * submission never creates a second one, and its private link is only emailed.
+ */
+export interface SubmitResult {
+  /** created: first submission · resubmitted: replaced a not-yet-approved one · update_requested: changes await approval. */
+  outcome: 'created' | 'resubmitted' | 'update_requested'
+  /** Only for `created`. */
+  submission: SubmissionStatus | null
+}
+
+/** A pending change to an approved response. */
+export interface UpdateRequestView {
+  id: string
+  name: string
+  opco: string
   consent: ConsentValue
   answers: AnswerMap
+  requestedAt: string
 }
 
 export interface ResponseSummary {
   certId: string
   name: string
+  email: string | null
   opco: string
   consent: ConsentValue
   answers: AnswerMap
   submittedAt: string
+  status: ApprovalStatus
+  reviewedAt: string | null
+  /** Approved automatically because the participant is on the participant list. */
+  autoApproved: boolean
+  rejectionReason: string | null
+  /** The participant has asked to change their approved details. */
+  pendingUpdate: boolean
   /** Downloads by the participant (admin downloads don't count as "received"). */
   participantDownloads: number
   lastDownloadedAt: string | null
@@ -110,6 +158,10 @@ export interface DownloadEventView {
 
 export interface ResponseDetail extends ResponseSummary {
   verificationCode: string
+  /** Admin who approved or rejected it (null when automatic or not yet reviewed). */
+  reviewedBy: string | null
+  /** The pending update request, with the details the participant wants. */
+  updateRequest: UpdateRequestView | null
   downloads: DownloadEventView[]
 }
 
@@ -124,6 +176,9 @@ export interface ResponseFilters {
   opco?: string[]
   consent?: ConsentValue
   status?: DownloadStatus
+  approval?: ApprovalStatus
+  /** Only responses with a pending update request. */
+  updates?: 'pending'
 }
 
 export interface ListResponsesQuery extends ResponseFilters {
@@ -141,7 +196,15 @@ export interface Paginated<T> {
 }
 
 export interface VerifyResult {
-  match: { certId: string; name: string; opco: string; submittedAt: string; verificationCode: string } | null
+  match: {
+    certId: string
+    name: string
+    opco: string
+    submittedAt: string
+    verificationCode: string
+    /** Public lookups only ever return approved certificates. */
+    status: ApprovalStatus
+  } | null
 }
 
 // ---- certificate settings ---------------------------------------------------------
@@ -173,11 +236,52 @@ export interface QuestionStats {
 }
 
 export interface DashboardStats {
-  totals: { responses: number; consented: number; certificatesDownloaded: number; downloadEvents: number }
+  totals: {
+    responses: number
+    approved: number
+    pending: number
+    rejected: number
+    updateRequests: number
+    consented: number
+    certificatesDownloaded: number
+    downloadEvents: number
+  }
   byDay: { date: string; count: number }[]
   byOpco: { opco: string; count: number }[]
   questions: QuestionStats[]
   recent: ResponseSummary[]
+}
+
+// ---- admin notification emails -------------------------------------------------------
+
+export interface NotificationEmails {
+  /** Saved in the dashboard. */
+  emails: string[]
+  /** From the server's ADMIN_NOTIFY_EMAILS, used only while `emails` is empty. */
+  fallback: string[]
+  /** False when the server can't send email (no AWS keys). */
+  emailEnabled: boolean
+}
+
+// ---- participant list (auto-approval) -------------------------------------------------
+
+export interface RosterEntry {
+  id: string
+  name: string
+  email: string | null
+  createdAt: string
+}
+
+export interface RosterEntryInput {
+  name?: string
+  email?: string
+}
+
+export interface RosterAddResult {
+  added: number
+  skipped: number
+  /** Pending submissions approved because they now match the list. */
+  approved: number
 }
 
 // ---- UI ---------------------------------------------------------------------------

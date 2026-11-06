@@ -3,11 +3,13 @@ import { Button } from 'antd'
 
 interface ReturningBannerProps {
   name: string
-  onView: () => void
+  /** Button text, e.g. "View my certificate" or "Check my certificate". */
+  actionLabel: string
+  onAction: () => void
 }
 
 /** Glass panel shown in the hero once the participant has submitted on this device. */
-export default function ReturningBanner({ name, onView }: ReturningBannerProps) {
+export default function ReturningBanner({ name, actionLabel, onAction }: ReturningBannerProps) {
   return (
     <div
       role="status"
@@ -22,12 +24,12 @@ export default function ReturningBanner({ name, onView }: ReturningBannerProps) 
       </p>
       <Button
         type="primary"
-        onClick={onView}
+        onClick={onAction}
         className="w-full shadow-[0_10px_30px_-10px_rgb(0_114_206/0.9)] sm:w-auto"
         icon={<ExportOutlined />}
         iconPlacement="end"
       >
-        View my certificate
+        {actionLabel}
       </Button>
     </div>
   )

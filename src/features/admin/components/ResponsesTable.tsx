@@ -10,6 +10,8 @@ interface ResponsesTableProps {
   emptyText: string
   /** Open the selected participant details. */
   onSelect?: (record: ResponseSummary) => void
+  /** Checkbox selection (e.g. for approving several at once). */
+  rowSelection?: TableProps<ResponseSummary>['rowSelection']
 }
 
 /** Server-paginated table shared by the Responses and Certificates pages. */
@@ -20,6 +22,7 @@ export default function ResponsesTable({
   onChange,
   emptyText,
   onSelect,
+  rowSelection,
 }: ResponsesTableProps) {
   const numberedColumns: Column[] = [
     {
@@ -41,6 +44,7 @@ export default function ResponsesTable({
       dataSource={data?.items}
       loading={loading}
       onChange={onChange}
+      rowSelection={rowSelection}
       scroll={{ x: 'max-content' }}
       locale={{ emptyText }}
       pagination={{

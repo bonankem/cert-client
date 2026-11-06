@@ -1,8 +1,10 @@
 import { useQueries } from '@tanstack/react-query'
 import { useState } from 'react'
-import type { TableColumnsType } from 'antd'
+import { Alert, Button, type TableColumnsType } from 'antd'
+import { Link } from 'react-router-dom'
 import { adminApi, publicApi } from '@/api'
 import QueryState from '@/components/common/QueryState'
+import { ROUTES } from '@/config/routes'
 import AdminPageHeader from '@/components/layout/AdminPageHeader'
 import { ExportCsvButton, ResponseDetailsDrawer } from '@/features/admin'
 import { ChartCard, DailyColumns, FeedbackBreakdown, OpcoBars, percent, RecentResponses, StatTile } from '@/features/dashboard'
@@ -39,11 +41,39 @@ function Dashboard({
   config: FormConfig
   onSelectResponse: (response: ResponseSummary) => void
 }) {
-  const { responses, consented, certificatesDownloaded } = stats.totals
+  const { responses, approved, pending, updateRequests, consented, certificatesDownloaded } = stats.totals
   const rating = topTwoShare(stats)
 
   return (
     <div className="flex flex-col gap-4">
+      {pending > 0 && (
+        <Alert
+          type="warning"
+          showIcon
+          title={`${pending} certificate${pending === 1 ? ' is' : 's are'} awaiting your approval`}
+          description="Participants can’t download their certificate until you approve it."
+          action={
+            <Link to={`${ROUTES.admin.responses}?approval=pending`}>
+              <Button size="small" type="primary">
+                Review now
+              </Button>
+            </Link>
+          }
+        />
+      )}
+      {updateRequests > 0 && (
+        <Alert
+          type="info"
+          showIcon
+          title={`${updateRequests} update request${updateRequests === 1 ? '' : 's'} to review`}
+          description="Participants asked to change details on an approved certificate. Nothing changes until you approve."
+          action={
+            <Link to={`${ROUTES.admin.responses}?updates=pending`}>
+              <Button size="small">Review</Button>
+            </Link>
+          }
+        />
+      )}
       <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4 min-w-0">
         <StatTile hero label="Responses" value={responses.toLocaleString()} detail={`${stats.byOpco.length} OpCos represented`} />
         <StatTile
@@ -54,9 +84,9 @@ function Dashboard({
         />
         <StatTile
           label="Certificates downloaded"
-          value={`${percent(certificatesDownloaded, responses)}%`}
-          meter={percent(certificatesDownloaded, responses)}
-          detail={`${certificatesDownloaded} of ${responses} participants`}
+          value={`${percent(certificatesDownloaded, approved)}%`}
+          meter={percent(certificatesDownloaded, approved)}
+          detail={`${certificatesDownloaded} of ${approved} approved`}
         />
         <StatTile
           label="Consented to story"

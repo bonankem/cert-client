@@ -2,7 +2,7 @@ import { CloseOutlined } from '@ant-design/icons'
 import { Link, useLocation } from 'react-router-dom'
 import BrandLogo from '@/components/common/BrandLogo'
 import { ROUTES } from '@/config/routes'
-import { ADMIN_SIDEBAR_NAV } from './AdminSidebar'
+import { ADMIN_SIDEBAR_NAV, PendingBadge } from './AdminSidebar'
 
 interface AdminMobileDrawerProps {
   open: boolean
@@ -88,6 +88,7 @@ export default function AdminMobileDrawer({ open, onClose }: AdminMobileDrawerPr
                     </div>
                   )}
                 </div>
+                {item.pendingBadge && <PendingBadge />}
               </Link>
             )
           })}

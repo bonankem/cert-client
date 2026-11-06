@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { ROUTES } from '@/config/routes'
 import type { FormConfig, ListResponsesQuery, ResponseSummary, SortField } from '@/types'
 import { formatDateTime, formatLongDate } from '@/utils/date'
-import { ConsentTag, DownloadStatusTag } from './components/StatusTags'
+import { ApprovalTag, ConsentTag, DownloadStatusTag, UpdateRequestedTag } from './components/StatusTags'
 
 export type Column = TableColumnType<ResponseSummary>
 
@@ -25,7 +25,31 @@ export const nameColumn = (query: ListResponsesQuery): Column => ({
   render: (_, r) => <Link to={ROUTES.admin.response(r.certId)}>{r.name}</Link>,
 })
 
-export const opcoColumn = (config: FormConfig, query: ListResponsesQuery): Column => ({
+export const approvalColumn: Column = {
+  key: 'approval',
+  title: 'Approval',
+  render: (_, r) => (
+    <span className="inline-flex flex-wrap gap-y-1">
+      <ApprovalTag status={r.status} autoApproved={r.autoApproved} reason={r.rejectionReason} />
+      {r.pendingUpdate && <UpdateRequestedTag />}
+    </span>
+  ),
+}
+
+export const emailColumn: Column = {
+  key: 'email',
+  title: 'Email',
+  render: (_, r) =>
+    r.email ? (
+      <Typography.Text copyable={{ text: r.email }} className="whitespace-nowrap text-sm">
+        {r.email}
+      </Typography.Text>
+    ) : (
+      '—'
+    ),
+}
+
+export const opcoColumn =(config: FormConfig, query: ListResponsesQuery): Column => ({
   key: 'opco',
   title: 'OpCo',
   dataIndex: 'opco',

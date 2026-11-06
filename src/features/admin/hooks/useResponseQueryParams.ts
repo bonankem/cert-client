@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   PAGE_SIZES,
+  type ApprovalStatus,
   type ConsentValue,
   type DownloadStatus,
   type ListResponsesQuery,
@@ -17,6 +18,7 @@ const SORT_FIELDS: readonly SortField[] = ['submittedAt', 'name', 'participantDo
 const SORT_ORDERS: readonly SortOrder[] = ['ascend', 'descend']
 const CONSENTS: readonly ConsentValue[] = ['Yes', 'No']
 const STATUSES: readonly DownloadStatus[] = ['downloaded', 'pending']
+const APPROVALS: readonly ApprovalStatus[] = ['pending', 'approved', 'rejected']
 
 const DEFAULTS = { page: 1, pageSize: 20 as PageSize, sortField: 'submittedAt' as SortField, sortOrder: 'descend' as SortOrder }
 
@@ -36,6 +38,8 @@ function parse(params: URLSearchParams): ListResponsesQuery {
     opco: opco.length ? opco : undefined,
     consent: oneOf(params.get('consent'), CONSENTS),
     status: oneOf(params.get('status'), STATUSES),
+    approval: oneOf(params.get('approval'), APPROVALS),
+    updates: params.get('updates') === 'pending' ? 'pending' : undefined,
   }
 }
 
@@ -52,6 +56,8 @@ function serialize(query: ListResponsesQuery): URLSearchParams {
   query.opco?.forEach((o) => params.append('opco', o))
   if (query.consent) params.set('consent', query.consent)
   if (query.status) params.set('status', query.status)
+  if (query.approval) params.set('approval', query.approval)
+  if (query.updates) params.set('updates', query.updates)
   return params
 }
 

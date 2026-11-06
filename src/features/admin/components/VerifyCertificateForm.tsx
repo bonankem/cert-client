@@ -12,12 +12,17 @@ function VerifyResultAlert({ verify }: { verify: ReturnType<typeof useVerifyCert
   const match = verify.data.match
   if (!match) return <Alert type="error" showIcon title="No certificate found with that ID or code." />
 
+  const approved = match.status === 'approved'
   return (
     <Alert
-      type="success"
+      type={approved ? 'success' : 'warning'}
       showIcon
-      title={`Valid — issued to ${match.name} (${match.opco})`}
-      description={`Issued ${formatLongDate(match.submittedAt)}. Certificate ID ${match.certId}, verification code ${match.verificationCode}.`}
+      title={
+        approved
+          ? `Valid — issued to ${match.name} (${match.opco})`
+          : `${match.status === 'pending' ? 'Awaiting approval' : 'Rejected'} — ${match.name} (${match.opco}). This does not verify publicly.`
+      }
+      description={`Submitted ${formatLongDate(match.submittedAt)}. Certificate ID ${match.certId}, verification code ${match.verificationCode}.`}
       action={
         <Link to={ROUTES.admin.response(match.certId)}>
           <Button size="small">Open</Button>

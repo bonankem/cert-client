@@ -2,11 +2,20 @@ import { DeleteOutlined } from '@ant-design/icons'
 import { App, Button, Card, Popconfirm, Skeleton } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ApiError, errorMessage } from '@/api'
-import CertificateViewer from '@/components/certificate/CertificateViewer'
 import QueryState from '@/components/common/QueryState'
 import AdminPageHeader from '@/components/layout/AdminPageHeader'
 import { ROUTES } from '@/config/routes'
-import { AnswersCard, ConsentTag, DownloadHistoryCard, DownloadStatusTag, ParticipantCard } from '@/features/admin'
+import {
+  AnswersCard,
+  ApprovalTag,
+  CertificatePanel,
+  ConsentTag,
+  DownloadHistoryCard,
+  DownloadStatusTag,
+  ParticipantCard,
+  ReviewButtons,
+  UpdateRequestCard,
+} from '@/features/admin'
 import { useDeleteResponse, useResponse } from '@/hooks/queries/admin'
 import { useCertificateSettings, useFormConfig } from '@/hooks/queries/public'
 import NotFoundPage from '@/pages/NotFoundPage'
@@ -37,8 +46,10 @@ function Detail({ response, config }: { response: ResponseDetail; config: FormCo
         description={response.opco}
         extra={
           <>
+            <ApprovalTag status={response.status} autoApproved={response.autoApproved} reason={response.rejectionReason} />
             <ConsentTag value={response.consent} />
-            <DownloadStatusTag count={response.participantDownloads} />
+            {response.status === 'approved' && <DownloadStatusTag count={response.participantDownloads} />}
+            <ReviewButtons response={response} />
             <Popconfirm
               title="Delete this response?"
               description="Its certificate will no longer verify. This can’t be undone."
@@ -54,6 +65,12 @@ function Detail({ response, config }: { response: ResponseDetail; config: FormCo
         }
       />
 
+      {response.updateRequest && (
+        <div className="mb-4">
+          <UpdateRequestCard response={response} config={config} />
+        </div>
+      )}
+
       <div className="grid gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div className="flex min-w-0 flex-col gap-4">
           <ParticipantCard response={response} />
@@ -61,7 +78,7 @@ function Detail({ response, config }: { response: ResponseDetail; config: FormCo
         </div>
         <div className="flex min-w-0 flex-col gap-4">
           <Card title="Certificate">
-            <CertificateViewer record={response} settings={settings} trackAs="admin" />
+            <CertificatePanel response={response} settings={settings} />
           </Card>
           <DownloadHistoryCard downloads={response.downloads} />
         </div>
