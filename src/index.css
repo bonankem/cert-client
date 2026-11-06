@@ -1,0 +1,263 @@
+/*
+ * Layer order: antd's CSS-in-JS is emitted into the `antd` layer (see
+ * AppProviders → <StyleProvider layer>), so Tailwind's preflight never
+ * overrides antd, while Tailwind components/utilities can still refine it.
+ */
+@layer theme, base, antd, components, utilities;
+
+@import 'tailwindcss';
+
+/* dark: utilities follow the theme switcher (data-theme on <html>), not just the OS. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --font-sans: 'Raleway', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-script: 'Great Vibes', 'Brush Script MT', cursive;
+
+  --color-navy: #0b2a5b;
+  --color-brand: #0072ce;
+  --color-sky: #00a9e8;
+  --color-leaf: #3aaa35;
+  --color-orange: #f26a21;
+  --color-band-end: #0b7bc4;
+  --color-band-start-dark: #061a3a;
+  --color-band-end-dark: #095e98;
+  --color-band-text: #d6e6f7;
+  --color-page: #edf2f8;
+  --color-page-dark: #09090b;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background: var(--color-page);
+    color: #13233f;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  [data-theme='dark'] body {
+    background: var(--color-page-dark);
+    color: #f4f4f5;
+  }
+}
+
+@layer components {
+  /* Pill-shaped radio "chips" built on antd Radio.Group (optionType="button") */
+  .choice-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .choice-chips .ant-radio-button-wrapper {
+    height: auto;
+    padding: 3px 10px;
+    line-height: 1.45;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 999px;
+    border-inline-start-width: 1px;
+  }
+
+  @media (min-width: 640px) {
+    .choice-chips {
+      gap: 6px;
+    }
+    .choice-chips .ant-radio-button-wrapper {
+      padding: 4px 13px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+
+  .choice-chips .ant-radio-button-wrapper::before {
+    display: none;
+  }
+
+  .choice-chips .ant-radio-button-wrapper-checked {
+    font-weight: 600;
+  }
+
+  .ant-form-item-label > label {
+    font-weight: 600;
+    font-size: 13.5px;
+  }
+
+  @media (min-width: 640px) {
+    .ant-form-item-label > label {
+      font-size: 14.5px;
+    }
+  }
+
+  /* Ant Design dropdown, select menu and input typography refinement */
+  .ant-select-dropdown,
+  .ant-select-item,
+  .ant-select-item-option,
+  .ant-select-item-option-content {
+    font-size: 13.5px !important;
+  }
+
+  .ant-dropdown-menu,
+  .ant-dropdown-menu-item,
+  .ant-dropdown-menu-title-content {
+    font-size: 13.5px !important;
+  }
+
+  .ant-select,
+  .ant-select-selector,
+  .ant-select-selection-item,
+  .ant-select-selection-placeholder {
+    font-size: 13.5px !important;
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-picker {
+    font-size: 13.5px !important;
+  }
+
+  /* Compact Ant Design table styling to ensure tables never become too large or oversized */
+  .ant-table {
+    font-size: 13px !important;
+  }
+  .ant-table-thead > tr > th {
+    padding: 8px 12px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    white-space: nowrap;
+  }
+  .ant-table-tbody > tr > td {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+  .ant-table-pagination.ant-pagination {
+    margin: 12px 0 !important;
+  }
+
+  /* Compact mobile form scaling */
+  @media (max-width: 639px) {
+    .ant-input,
+    .ant-select-selector,
+    .ant-btn {
+      font-size: 13px !important;
+    }
+    .ant-card .ant-card-body {
+      padding: 12px 14px !important;
+    }
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 6px 8px !important;
+      font-size: 12px !important;
+    }
+  }
+}
+
+/*
+ * Data-viz tokens (dashboard). Categorical/sequential blue for single series;
+ * a diverging blue ↔ grey ↔ red scale for best → worst answers. Each arm was
+ * validated as an ordinal ramp against both chart surfaces; --viz-ink-* is
+ * the label colour that stays legible inside each fill.
+ */
+@layer base {
+  :root {
+    --viz-series: #2a78d6;
+    --viz-grid: #e1e0d9;
+    --viz-baseline: #c3c2b7;
+    --viz-muted: #898781;
+    --viz-div-1: #1c5cab;
+    --viz-div-2: #86b6ef;
+    --viz-div-3: #f0efec;
+    --viz-div-4: #ea9998;
+    --viz-div-5: #c93c3b;
+    --viz-ink-1: #ffffff;
+    --viz-ink-2: #0b0b0b;
+    --viz-ink-3: #0b0b0b;
+    --viz-ink-4: #0b0b0b;
+    --viz-ink-5: #ffffff;
+  }
+
+  :root[data-theme='dark'] {
+    --viz-series: #38bdf8;
+    --viz-grid: #27272a;
+    --viz-baseline: #3f3f46;
+    --viz-muted: #a1a1aa;
+    --viz-div-1: #38bdf8;
+    --viz-div-2: #0284c7;
+    --viz-div-3: #27272a;
+    --viz-div-4: #991b1b;
+    --viz-div-5: #ef4444;
+    --viz-ink-1: #09090b;
+    --viz-ink-2: #f4f4f5;
+    --viz-ink-3: #f4f4f5;
+    --viz-ink-4: #f4f4f5;
+    --viz-ink-5: #09090b;
+  }
+}
+
+@layer components {
+  /* Labels sit directly on their inputs (antd gives vertical labels a fixed height). */
+  .ant-form-vertical .ant-form-item-label {
+    padding-bottom: 2px;
+  }
+  .ant-form-vertical .ant-form-item-label > label {
+    height: auto;
+    line-height: 1.4;
+  }
+
+  /*
+   * Hero band: brand gradient, two soft glows (sky top-left, green bottom-right)
+   * and a dot grid that fades out toward the content.
+   */
+  .hero-bg {
+    background:
+      radial-gradient(60rem 26rem at 8% -10%, rgb(0 169 232 / 0.38), transparent 60%),
+      radial-gradient(40rem 22rem at 100% 120%, rgb(58 170 53 / 0.28), transparent 65%),
+      linear-gradient(120deg, #071d44 0%, #0a347a 55%, #0b4f9e 100%);
+  }
+  .hero-dots {
+    background-image: radial-gradient(rgb(255 255 255 / 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
+  }
+  [data-theme='dark'] .hero-bg {
+    background:
+      radial-gradient(60rem 26rem at 8% -10%, rgb(0 169 232 / 0.22), transparent 60%),
+      radial-gradient(40rem 22rem at 100% 120%, rgb(58 170 53 / 0.18), transparent 65%),
+      linear-gradient(120deg, #061a3a 0%, #082f5e 55%, #095e98 100%);
+  }
+  [data-theme='dark'] .hero-dots {
+    background-image: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px);
+  }
+}
+
+@layer components {
+  /* Hero theme switcher: a single glass button showing the active mode. */
+  .hero-switch.ant-btn {
+    background: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    color: #fff;
+    padding-inline: 12px;
+    backdrop-filter: blur(8px);
+  }
+  .hero-switch.ant-btn:hover {
+    background: rgb(255 255 255 / 0.16);
+    border-color: rgb(255 255 255 / 0.24);
+    color: #fff;
+  }
+
+  /* Gentle float for the hero illustration. */
+  .hero-float {
+    animation: hero-float 6s ease-in-out infinite;
+  }
+  @keyframes hero-float {
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-float {
+      animation: none;
+    }
+  }
+}

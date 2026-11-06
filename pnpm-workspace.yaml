@@ -1,0 +1,5 @@
+allowBuilds:
+  core-js: false
+minimumReleaseAgeExclude:
+  - '@tanstack/query-core@5.106.1'
+  - '@tanstack/react-query@5.106.1'
